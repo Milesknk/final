@@ -9,18 +9,19 @@
 
 ## โครงสร้างโปรเจกต์
 
+```text
 project-root/
 ├─ frontend/
-│ ├─ src/
-│ ├─ public/
-│ ├─ package.json
-│ └─ vite.config.ts
+│  ├─ src/
+│  ├─ public/
+│  ├─ package.json
+│  ├─ vite.config.ts
+│  └─ tsconfig.json
 │
 ├─ backend/
-│ ├─ src/
-│ ├─ package.json
-│ ├─ .env
-│ └─ tsconfig.json
+│  ├─ src/
+│  ├─ package.json
+│  └─ .env
 │
 └─ README.md
 
