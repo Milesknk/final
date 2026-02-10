@@ -55,7 +55,7 @@ cd <project-root>
   "react-router-dom": "^7.12.0",
   "react-toastify": "^11.0.5"
 }
-ื
+
 ##Backend (Node.js + Express)
 -cd backend
 -npm install
