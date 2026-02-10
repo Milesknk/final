@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# React + TypeScript + Vite & Node.js Backend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+โปรเจกต์นี้เป็นระบบเว็บแอปพลิเคชัน แบ่งออกเป็น 2 ส่วนหลัก
 
-Currently, two official plugins are available:
+- **Frontend** : React + TypeScript + Vite  
+- **Backend** : Node.js + Express + MySQL  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## โครงสร้างโปรเจกต์
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+project-root/
+├─ frontend/
+│ ├─ src/
+│ ├─ public/
+│ ├─ package.json
+│ └─ vite.config.ts
+│
+├─ backend/
+│ ├─ src/
+│ ├─ package.json
+│ ├─ .env
+│ └─ tsconfig.json
+│
+└─ README.md
 
-## Expanding the ESLint configuration
+## สิ่งที่ต้องมีในเครื่อง (Prerequisites)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Node.js** (แนะนำเวอร์ชัน LTS)
+- **npm**
+- **MySQL**
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+ตรวจสอบเวอร์ชัน:
+```bash
+node -v
+npm -v
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+วิธีติดตั้งโปรเจกต์
+git clone <repository-url>
+cd <project-root>
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Frontend (React + TypeScript + Vite)
+เข้าโฟลเดอร์ frontend
+-cd fronted
+-npm install
+-npm run dev
+-npm install react react-dom react-router-dom react-toastify
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+#เปิดเว็ป
+👉 http://localhost:5173
+"dependencies": {
+  "react": "^19.2.0",
+  "react-dom": "^19.2.0",
+  "react-router-dom": "^7.12.0",
+  "react-toastify": "^11.0.5"
+}
+ื
+##Backend (Node.js + Express)
+-cd backend
+-npm install
+-npm install express mysql2 multer bcryptjs jsonwebtoken cors dotenv
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+แก้DBในไฟล์ backend/src/db.ts
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=your_database_name
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+สร้างไฟล์ .env
+JWT_SECRET=your_secret_key
+
+แก้ไขPortได้ที่
+backend/src/index.ts
+
+-npm run dev
