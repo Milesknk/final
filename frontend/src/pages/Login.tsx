@@ -13,7 +13,7 @@ function Login() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (loading) return; // ✅ กันยิงซ้ำ
+    if (loading) return;
 
     setError("");
 
@@ -22,7 +22,7 @@ function Login() {
       return;
     }
 
-    setLoading(true); // ✅ เริ่ม loading
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:3000/api/auth/login", {
