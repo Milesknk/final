@@ -40,12 +40,11 @@ export const create = async (req: Request, res: Response) => {
 
     for (const admin of admins) {
       if (admin.user_id === userId) continue;
+
       await conn.execute(
         `INSERT INTO class_users
         (class_id, user_id, role_flg, view_flg, deleted_flg, created_datetime)
-        SELECT ?, ?, 0, 0, 0, NOW()
-        FROM users u
-        WHERE u.role_flg = 1`,
+        VALUES (?, ?, 0, 0, 0, NOW())`,
         [classId, admin.user_id],
       );
     }
