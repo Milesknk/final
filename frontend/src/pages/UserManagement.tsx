@@ -4,20 +4,37 @@ import {
   fetchUsers,
   updateUserRole,
   updateUserActive,
+  fetchgetRoles,
+  type User,
+  type Role,
 } from "../services/user.service";
-import type { User } from "../services/user.service";
 import "../css/UserManagement.css";
 
 function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [roles, setRoles] = useState<Role[]>([]);
 
   useEffect(() => {
-    fetchUsers()
-      .then(setUsers)
-      .catch(() => toast.error("โหลดข้อมูลไม่สำเร็จ"))
-      .finally(() => setLoading(false));
-  }, []);
+  const load = async () => {
+    try {
+
+      const usersData = await fetchUsers();
+      const rolesData = await fetchgetRoles();
+
+      setUsers(usersData);
+      setRoles(rolesData);
+    } catch (err) {
+      console.error("LOAD ERROR:", err);
+      toast.error("โหลดข้อมูลไม่สำเร็จ");
+    } finally {
+      console.log("finish loading");
+      setLoading(false);
+    }
+  };
+
+  load();
+}, []);
 
   const changeRole = async (user_id: string, role_flg: number) => {
     if (!window.confirm("ยืนยันการเปลี่ยนสิทธิ์ผู้ใช้?")) return;
@@ -89,10 +106,11 @@ function UserManagement() {
                       changeRole(user.user_id, Number(e.target.value))
                     }
                   >
-                    <option value={0}>ผู้ดูแลระบบ</option>
-                    <option value={1}>อาจารย์</option>
-                    <option value={2}>นักศึกษา</option>
-                    <option value={3}>ผู้ใช้ทั่วไป</option>
+                    {roles.map((role) => (
+                      <option key={role.role_id} value={role.role_id}>
+                        {role.role_name}
+                      </option>
+                    ))}
                   </select>
                 </td>
 

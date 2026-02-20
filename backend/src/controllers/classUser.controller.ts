@@ -30,14 +30,15 @@ export const getClassUsers = async (req: Request, res: Response) => {
   try {
     const [rows] = await conn.query(
     `
-    SELECT cu.user_id, u.user_name, u.role_flg, cu.view_flg
+    SELECT cu.user_id, u.user_name, cu.view_flg, u.role_flg, roles.role_name
     FROM class_users AS cu
-    LEFT OUTER JOIN users AS u ON cu.user_id = u.user_id
-    WHERE cu.class_id = ? AND cu.role_flg NOT IN (0)
+    LEFT JOIN users AS u ON cu.user_id = u.user_id
+    LEFT JOIN ref_role as roles ON roles.role_id = u.role_flg
+    WHERE u.deleted_flg = 0 and cu.class_id = ?
+    GROUP BY  cu.user_id, u.user_name, cu.view_flg, u.role_flg, roles.role_name
     `,
     [classId]
     );
-
     res.json({ data: rows });
   } catch (err) {
     console.error(err);
@@ -77,8 +78,8 @@ export const addClassUser = async (req: Request, res: Response) => {
     } else {
       await conn.query(
         `
-        INSERT INTO class_users (class_id, user_id, role_flg, view_flg, deleted_flg)
-        SELECT ?, u.user_id, u.role_flg, 0, 0
+        INSERT INTO class_users (class_id, user_id, view_flg, deleted_flg)
+        SELECT ?, u.user_id, 0, 0
         FROM users u
         WHERE u.user_id = ?
         `,

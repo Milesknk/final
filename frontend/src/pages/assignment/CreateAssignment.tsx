@@ -21,7 +21,10 @@ const CreateAssignment = () => {
   const [link, setLink] = useState("");
   const [workType, setWorkType] = useState("");
   const [loading, setLoading] = useState(false);
+  const MAX_LENGTH = 500;
 
+
+  const remaining: number = MAX_LENGTH - detail.length;
   useEffect(() => {
     const fetchClasses = async () => {
       try {
@@ -141,11 +144,17 @@ const CreateAssignment = () => {
           <div className="field">
             <div className="form-section">
               <label className="section-title">รายละเอียด</label>
-              <textarea
-                value={detail}
-                onChange={(e) => setDetail(e.target.value)}
-                placeholder="อธิบายรายละเอียดของผลงาน"
-              />
+                <div className="textarea-wrapper">
+                <textarea
+                  maxLength={MAX_LENGTH}
+                  value={detail}
+                  onChange={(e) => setDetail(e.target.value)}
+                  placeholder="อธิบายรายละเอียดของผลงาน"
+                />
+                <span className="char-count">
+                  {remaining}/{MAX_LENGTH}
+                </span>
+              </div>
             </div>
           </div>
 

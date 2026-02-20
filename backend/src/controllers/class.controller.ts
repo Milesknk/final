@@ -33,9 +33,9 @@ export const create = async (req: Request, res: Response) => {
 
     await conn.execute(
       `INSERT INTO class_users
-      (class_id, user_id, role_flg, view_flg, deleted_flg, created_datetime)
-      VALUES (?, ?, ?, 0, 0, NOW())`,
-      [classId, userId, role],
+      (class_id, user_id, view_flg, deleted_flg, created_datetime)
+      VALUES (?, ?, 0, 0, NOW())`,
+      [classId, userId],
     );
 
     for (const admin of admins) {
@@ -43,8 +43,8 @@ export const create = async (req: Request, res: Response) => {
 
       await conn.execute(
         `INSERT INTO class_users
-        (class_id, user_id, role_flg, view_flg, deleted_flg, created_datetime)
-        VALUES (?, ?, 0, 0, 0, NOW())`,
+        (class_id, user_id, view_flg, deleted_flg, created_datetime)
+        VALUES (?, ?, 0, 0, NOW())`,
         [classId, admin.user_id],
       );
     }

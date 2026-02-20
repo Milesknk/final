@@ -5,8 +5,9 @@ export const getUsers = async (req: Request, res: Response) => {
   const conn = await db.getConnection();
   try {
     const [rows]: any = await conn.execute(`
-      SELECT user_id, user_name, role_flg, deleted_flg
-      FROM users
+      SELECT users.user_id, users.user_name, users.role_flg, ref_role.role_name, users.deleted_flg
+      FROM users 
+      LEFT JOIN ref_role ON ref_role.role_id = users.role_flg
       ORDER BY user_id ASC
     `);
 
@@ -14,9 +15,9 @@ export const getUsers = async (req: Request, res: Response) => {
       user_id: user.user_id,
       user_name: user.user_name,
       role_flg: Number(user.role_flg),
+      role_name: user.role_name,
       deleted_flg: user.deleted_flg === 0 ? 0 : 1
     }));
-
     res.json({ data: users });
   } catch (err) {
     console.error(err);
@@ -97,7 +98,7 @@ export const getAvaliableUsers = async (req: Request, res: Response) => {
       FROM class_users AS cu
       WHERE cu.class_id = ?
         AND cu.deleted_flg = 0
-    )
+    ) AND u.deleted_flg = 0
   `;
 
   const [users] = await db.query(sql, [classId]);
@@ -105,4 +106,22 @@ export const getAvaliableUsers = async (req: Request, res: Response) => {
   res.json({
     data: users,
   });
+};
+
+export const getRoles = async (req: any, res: any) => {
+  const conn = await db.getConnection();
+  try {
+    const sql = `
+      SELECT role_id, role_name 
+      FROM ref_role
+      ORDER BY role_id ASC
+    `;
+
+    const [rows] = await conn.query(sql);
+    console.log(rows)
+    return res.json(rows);
+  } catch (err) {
+    console.error("GET ROLE ERROR:", err);
+    return res.status(500).json({ message: "database error" });
+  }
 };

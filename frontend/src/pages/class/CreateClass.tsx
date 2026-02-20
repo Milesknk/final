@@ -14,6 +14,12 @@ function CreateClass() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const MAX_LENGTH = 500;
+
+
+  const remaining: number = MAX_LENGTH - describe.length;
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -73,11 +79,17 @@ function CreateClass() {
 
           <div className="field">
             <div className="form-section">
-              <label className="section-title">คำอธิบายรายวิชา</label>
-              <textarea
-                value={describe}
-                onChange={(describe) => setDescribe(describe.target.value)}
-              />
+              <label className="section-title" >คำอธิบายรายวิชา</label>
+                <div className="textarea-wrapper">
+                <textarea
+                  maxLength={MAX_LENGTH}
+                  value={describe}
+                  onChange={(e) => setDescribe(e.target.value)}
+                />
+                <span className="char-count">
+                  {remaining}/{MAX_LENGTH}
+                </span>
+              </div>
             </div>
           </div>
 

@@ -14,10 +14,16 @@ const authHeader = () => {
   };
 };
 
+export interface Role {
+  role_id: number;
+  role_name: string;
+}
+
 export type User = {
   user_id: string;
   user_name: string;
   role_flg: number;
+  role_name: string;
   deleted_flg: 0 | 1;
 };
 
@@ -79,4 +85,15 @@ export const fetchAvailableUsers = async (classId: string) => {
 
   const data = await res.json();
   return data.data;
+};
+
+export const fetchgetRoles = async (): Promise<Role[]> => {
+  const res = await fetch(`${API}/get-role`, {
+    headers: authHeader(),
+  });
+
+  if (!res.ok) throw new Error("fetch get roles error");
+
+  const data = await res.json();
+  return data;
 };
