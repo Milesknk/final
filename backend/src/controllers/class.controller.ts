@@ -65,90 +65,95 @@ export const view = async (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")[1];
     const search = (req.query.search as string)?.trim();
-    if (!token) {
-      return res.status(401).json({ message: "unauthorized" });
+
+    let user_id: number | null = null;
+    let role: number | null = null;
+
+    if (token) {
+      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+      user_id = decoded.user_id;
+      role = decoded.role;
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    const { user_id, role } = decoded;
+    const isGuest = role === null || role === 3;
 
     let rows: any;
 
     if (!search) {
-      if (role !== 3) {
+      if (!isGuest) {
         [rows] = await db.execute(
           `
-      SELECT c.class_id, c.class_name, c.class_describe, c.created_datetime
-      FROM classes c
-      LEFT JOIN class_users cu ON cu.class_id = c.class_id
-      WHERE c.deleted_flg = 0
-        AND cu.user_id = ?
-        AND cu.view_flg = 0
-      ORDER BY c.created_datetime DESC
-      `,
+          SELECT c.class_id, c.class_name, c.class_describe, c.created_datetime
+          FROM classes c
+          LEFT JOIN class_users cu ON cu.class_id = c.class_id
+          WHERE c.deleted_flg = 0
+            AND cu.user_id = ?
+            AND cu.view_flg = 0
+          ORDER BY c.created_datetime DESC
+          `,
           [user_id],
         );
       } else {
         [rows] = await db.execute(
           `
-      SELECT c.class_id, c.class_name, c.class_describe, c.created_datetime
-      FROM classes c
-      WHERE c.deleted_flg = 0
-      ORDER BY c.created_datetime DESC
-      `,
+          SELECT c.class_id, c.class_name, c.class_describe, c.created_datetime
+          FROM classes c
+          WHERE c.deleted_flg = 0
+          ORDER BY c.created_datetime DESC
+          `,
+        );
+      }
+    } else {
+      const keyword = `%${search}%`;
+
+      if (!isGuest) {
+        [rows] = await db.execute(
+          `
+          SELECT DISTINCT
+            c.class_id,
+            c.class_name,
+            c.class_describe,
+            c.created_datetime
+          FROM classes c
+          LEFT JOIN class_users cu ON cu.class_id = c.class_id
+          LEFT JOIN class_assignments ca ON ca.class_id = c.class_id
+          WHERE c.deleted_flg = 0
+            AND cu.user_id = ?
+            AND cu.view_flg = 0
+            AND (
+              c.class_id LIKE ?
+              OR c.class_name LIKE ?
+              OR ca.assignment_name LIKE ?
+              OR ca.assignment_type LIKE ?
+            )
+          ORDER BY c.created_datetime DESC
+          `,
+          [user_id, keyword, keyword, keyword, keyword],
+        );
+      } else {
+        [rows] = await db.execute(
+          `
+          SELECT DISTINCT
+            c.class_id,
+            c.class_name,
+            c.class_describe,
+            c.created_datetime
+          FROM classes c
+          LEFT JOIN class_assignments ca ON ca.class_id = c.class_id
+          WHERE c.deleted_flg = 0
+            AND (
+              c.class_id LIKE ?
+              OR c.class_name LIKE ?
+              OR ca.assignment_name LIKE ?
+              OR ca.assignment_type LIKE ?
+            )
+          ORDER BY c.created_datetime DESC
+          `,
+          [keyword, keyword, keyword, keyword],
         );
       }
     }
-    else {
-  const keyword = `%${search}%`;
 
-  if (role !== 3) {
-    [rows] = await db.execute(
-      `
-      SELECT DISTINCT
-        c.class_id,
-        c.class_name,
-        c.class_describe,
-        c.created_datetime
-      FROM classes c
-      LEFT JOIN class_users cu ON cu.class_id = c.class_id
-      LEFT JOIN class_assignments ca ON ca.class_id = c.class_id
-      WHERE c.deleted_flg = 0
-        AND cu.user_id = ?
-        AND cu.view_flg = 0
-        AND (
-          c.class_id LIKE ?
-          OR c.class_name LIKE ?
-          OR ca.assignment_name LIKE ?
-          OR ca.assignment_type LIKE ?
-        )
-      ORDER BY c.created_datetime DESC
-      `,
-      [user_id, keyword, keyword, keyword, keyword]
-    );
-  } else {
-    [rows] = await db.execute(
-      `
-      SELECT DISTINCT
-        c.class_id,
-        c.class_name,
-        c.class_describe,
-        c.created_datetime
-      FROM classes c
-      LEFT JOIN class_assignments ca ON ca.class_id = c.class_id
-      WHERE c.deleted_flg = 0
-        AND (
-          c.class_id LIKE ?
-          OR c.class_name LIKE ?
-          OR ca.assignment_name LIKE ?
-          OR ca.assignment_type LIKE ?
-        )
-      ORDER BY c.created_datetime DESC
-      `,
-      [keyword, keyword, keyword, keyword]
-    );
-  }
-}
     return res.json({ data: rows });
   } catch (err) {
     console.error(err);
@@ -294,21 +299,17 @@ export const deletedClass = async (req: Request, res: Response) => {
           deleted_by = ?
       WHERE class_id = ?
       `,
-      [userId, classId]
+      [userId, classId],
     );
 
     if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ message: "ไม่พบรายวิชา" });
+      return res.status(404).json({ message: "ไม่พบรายวิชา" });
     }
 
     res.json({ message: "ลบรายวิชาสำเร็จ" });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({ message: "database error" });
+    res.status(500).json({ message: "database error" });
   } finally {
     conn.release();
   }
