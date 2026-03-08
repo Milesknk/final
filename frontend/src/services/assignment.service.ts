@@ -2,13 +2,9 @@ const API = "http://localhost:3000/api/assignment";
 
 const getToken = () => localStorage.getItem("token");
 
-export const authHeader = () => {
+export const authHeader = (): HeadersInit => {
   const token = getToken();
-  if (!token) throw new Error("No token found");
-
-  return {
-    Authorization: `Bearer ${token}`,
-  };
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
 export type CreateAssignmentPayload = {

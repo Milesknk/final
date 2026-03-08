@@ -50,10 +50,12 @@ export const fetchClasses = async (search?: string) => {
     ? `${API}/view?search=${encodeURIComponent(search)}`
     : `${API}/view`;
 
+  const token = localStorage.getItem("token");
+
   const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
+    headers: token
+      ? { Authorization: `Bearer ${token}` }
+      : {},
   });
 
   const data = await res.json();

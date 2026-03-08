@@ -13,7 +13,7 @@ const AssignmentDetail = () => {
 
   const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (!assignment_id) return;
 
@@ -45,6 +45,17 @@ const AssignmentDetail = () => {
       </div>
     );
   }
+    
+  if (!token) {
+    return (
+      <div className="login-required">
+        <div className="login-required-card">
+          <h2>เข้าสู่ระบบเพื่อดูผลงาน</h2>
+          <button onClick={() => navigate("/login")}>ไปหน้าเข้าสู่ระบบ</button>
+        </div>
+      </div>
+    );
+  }
 
   if (!assignment) {
     return (
@@ -56,6 +67,8 @@ const AssignmentDetail = () => {
       </div>
     );
   }
+  
+  
 
   return (
     <div className="create-assignment-page">

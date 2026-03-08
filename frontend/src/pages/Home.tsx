@@ -23,11 +23,14 @@ function Home() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const currentRole = Number(localStorage.getItem("role_flg"));
+ 
+  const role = (() => {
+    const storedRole = localStorage.getItem("role_flg");
+    return storedRole ? Number(storedRole) : null;
+  })();
+
 
   useEffect(() => {
-    if (!token) return;
-
     const timer = setTimeout(async () => {
       try {
         const data = await fetchClasses(search.trim() || undefined);
@@ -53,21 +56,9 @@ function Home() {
     }
   };
 
-  if (!token) {
-    return (
-      <div className="login-required">
-        <div className="login-required-card">
-          <h2>เข้าสู่ระบบเพื่อดูรายวิชา</h2>
-          <button onClick={() => navigate("/login")}>ไปหน้าเข้าสู่ระบบ</button>
-        </div>
-      </div>
-    );
-  }
-
   const totalPages = Math.ceil(classes.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentClasses = classes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
   return (
     <div className="home-field">
       <div className="home-search-wrapper">
@@ -96,7 +87,7 @@ function Home() {
 
       <div className="home-class-grid">
         {currentClasses.map((item) => {
-          const canDeleteClass = currentRole === 0 || currentRole === 1;
+          const canDeleteClass = role === 0 || role === 1;
 
           return (
             <div

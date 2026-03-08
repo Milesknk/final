@@ -121,23 +121,23 @@
 }
 
 .textarea-wrapper {
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .textarea-wrapper textarea {
   width: 100%;
   min-height: 120px;
-  padding: 10px;
-  padding-bottom: 28px;
+  padding: 12px;
   box-sizing: border-box;
   resize: none;
+  line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 .char-count {
-  position: absolute;
-  bottom: 8px;
-  right: 10px;
+  margin-top: 6px;
   font-size: 12px;
   color: #888;
-  pointer-events: none;
+  text-align: right;
 }
