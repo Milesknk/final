@@ -296,7 +296,7 @@ const AssignmentDetail = () => {
                     </div>
                   </div>
 
-                  {(role === "admin" ||
+                  {(role === "0" ||
                     String(c.user_id) === String(currentUserId)) && (
                     <div className="comment-menu">
                       <button className="gear-btn">
