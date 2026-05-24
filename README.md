@@ -45,7 +45,7 @@ cd <project-root>
 -cd fronted
 -npm install
 -npm run dev
--npm install react react-dom react-router-dom react-toastify
+-npm install react react-dom react-router-dom react-toastify react-icons
 
 #เปิดเว็ป
 👉 http://localhost:5173
