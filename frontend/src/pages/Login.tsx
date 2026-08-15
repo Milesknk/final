@@ -76,13 +76,13 @@ function Login() {
 
         <form onSubmit={handleSubmit}>
           <div className="field">
-              <label className="section-title">ชื่อผู้ใช้</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
-              />
+            <label className="section-title">ชื่อผู้ใช้</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
+            />
           </div>
 
           <div className="field">
@@ -97,10 +97,39 @@ function Login() {
             </div>
           </div>
 
-          <button className="login-primary-btn" type="submit" disabled={loading}>
+          <button
+            className="login-primary-btn"
+            type="submit"
+            disabled={loading}
+          >
             {loading ? "กำลังเข้าสู่ระบบ..." : "Login"}
           </button>
         </form>
+        <div className="social-login">
+          <div className="divider">
+            <span>หรือ</span>
+          </div>
+
+          <button
+            type="button"
+            className="google-login-btn"
+            onClick={() => {
+              window.location.href = "http://localhost:3000/api/auth/google";
+            }}
+          >
+            Continue with Google
+          </button>
+
+          <button
+            type="button"
+            className="microsoft-login-btn"
+            onClick={() => {
+              window.location.href = "http://localhost:3000/api/auth/microsoft";
+            }}
+          >
+            Continue with Microsoft
+          </button>
+        </div>
 
         <div className="footer">
           <Link to="/register">Create new account</Link>
